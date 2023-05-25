@@ -1,0 +1,212 @@
+unit Fornecedores;
+
+interface
+
+uses
+  Classes, SysUtils, IWAppForm, IWApplication, IWColor, IWTypes, IWHTMLControls,
+  IWCompEdit, Vcl.Controls, IWVCLBaseControl, IWBaseControl, IWBaseHTMLControl,
+  IWControl, IWCompButton, IWVCLComponent, IWBaseLayoutComponent,
+  IWBaseContainerLayout, IWContainerLayout, IWTemplateProcessorHTML;
+
+type
+  TFRMFORNECEDORES = class(TIWAppForm)
+    IWTemplateProcessorHTML1: TIWTemplateProcessorHTML;
+    BTNSALVAR: TIWButton;
+    BTNEDITAR: TIWButton;
+    BTNNOVO: TIWButton;
+    BTNCANCELAR: TIWButton;
+    BTNEXCLUIR: TIWButton;
+    txtId: TIWEdit;
+    TXTNOME: TIWEdit;
+    TXTPRODUTOS: TIWEdit;
+    TXTTELEFONE: TIWEdit;
+    BTNBUSCAR: TIWButton;
+    TXTBUSCAR: TIWEdit;
+    MENU: TIWLink;
+    TXTENDERECO: TIWEdit;
+
+     procedure limparCampos;
+    procedure associarCampos();
+
+    procedure buscarTudo();
+    procedure buscarNome();
+    procedure IWTemplateProcessorHTML1UnknownTag(const AName: string;
+      var VValue: string);
+    procedure BTNNOVOAsyncClick(Sender: TObject; EventParams: TStringList);
+    procedure BTNSALVARAsyncClick(Sender: TObject; EventParams: TStringList);
+    procedure BTNCANCELARClick(Sender: TObject);
+    procedure BTNEDITARAsyncClick(Sender: TObject; EventParams: TStringList);
+    procedure BTNEXCLUIRClick(Sender: TObject);
+    procedure BTNBUSCARClick(Sender: TObject);
+    procedure MENUClick(Sender: TObject);
+
+  public
+  end;
+
+implementation
+
+{$R *.dfm}
+
+uses ServerController, Menu;
+
+
+{ TFRMFORNECEDORES }
+
+procedure TFRMFORNECEDORES.associarCampos;
+begin
+serv.query_forn.FieldByName('nome').Value := txtnome.Text;
+serv.query_forn.FieldByName('produtos').Value := txtprodutos.Text;
+serv.query_forn.FieldByName('telefone').Value := txttelefone.Text;
+serv.query_forn.FieldByName('endereco').Value := txtendereco.text;
+
+end;
+
+procedure TFRMFORNECEDORES.BTNBUSCARClick(Sender: TObject);
+begin
+buscarnome;
+end;
+
+procedure TFRMFORNECEDORES.BTNCANCELARClick(Sender: TObject);
+begin
+
+WebApplication.CallBackResponse.AddJavaScriptToExecute('$(''#EditaDados'').modal(''hide'');');
+
+end;
+
+procedure TFRMFORNECEDORES.BTNEDITARAsyncClick(Sender: TObject;
+  EventParams: TStringList);
+begin
+
+serv.query_forn.Locate('id', txtid.Text, []);
+serv.query_forn.Edit;
+
+if not serv.query_forn.FieldByName('nome').IsNull then
+txtnome.Text := serv.query_forn.FieldByName('nome').Value;
+
+if not serv.query_forn.FieldByName('produtos').IsNull then
+txtprodutos.Text := serv.query_forn.FieldByName('produtos').Value;
+
+if not serv.query_forn.FieldByName('telefone').IsNull then
+txttelefone.Text := serv.query_forn.FieldByName('telefone').Value;
+
+if not serv.query_forn.FieldByName('endereco').IsNull then
+txtendereco.text := serv.query_forn.FieldByName('endereco').Value;
+
+
+WebApplication.CallBackResponse.AddJavaScriptToExecute('$(''#EditaDados'').modal(''show'');');
+
+end;
+
+procedure TFRMFORNECEDORES.BTNEXCLUIRClick(Sender: TObject);
+begin
+serv.query_forn.Locate('id', txtid.Text, []);
+serv.query_forn.Delete;
+buscarTudo;
+end;
+
+procedure TFRMFORNECEDORES.BTNNOVOAsyncClick(Sender: TObject;
+  EventParams: TStringList);
+begin
+limparCampos;
+serv.query_forn.Insert;
+WebApplication.CallBackResponse.AddJavaScriptToExecute('$(''#EditaDados'').modal(''show'');');
+
+end;
+
+procedure TFRMFORNECEDORES.BTNSALVARAsyncClick(Sender: TObject;
+  EventParams: TStringList);
+begin
+if Trim(txtnome.Text) = '' then
+begin
+   webApplication.ShowMessage('Preencha o Campo Nome');
+   txtnome.SetFocus;
+   exit;
+end;
+
+if Trim(txtprodutos.Text) = '' then
+begin
+   webApplication.ShowMessage('Preencha o Campo Produtos');
+   txtprodutos.SetFocus;
+   exit;
+end;
+
+
+
+associarCampos();
+serv.query_forn.Post;
+limparCampos;
+buscarTudo;
+serv.query_forn.Insert;
+
+WebApplication.CallBackResponse.AddJavaScriptToExecute('$(''#EditaDados'').modal(''hide'');');
+WebApplication.CallBackResponse.AddJavaScriptToExecute('location.reload()');
+
+
+end;
+
+procedure TFRMFORNECEDORES.buscarNome;
+begin
+ serv.query_forn.Close;
+    serv.query_forn.SQL.Clear;
+    serv.query_forn.SQL.Add('SELECT * from fornecedores where nome LIKE :nome order by nome asc');
+    serv.query_forn.ParamByName('nome').Value := txtbuscar.Text + '%';
+    //serv.query_login.ParamByName('senha').Value := txtSenha.Text;
+    serv.query_forn.Open();
+end;
+
+procedure TFRMFORNECEDORES.buscarTudo;
+begin
+    serv.query_forn.Close;
+    serv.query_forn.SQL.Clear;
+    serv.query_forn.SQL.Add('SELECT * from fornecedores order by nome asc');
+    //serv.query_login.ParamByName('usuario').Value := txtUsuario.Text;
+    //serv.query_login.ParamByName('senha').Value := txtSenha.Text;
+    serv.query_forn.Open();
+end;
+
+procedure TFRMFORNECEDORES.IWTemplateProcessorHTML1UnknownTag(
+  const AName: string; var VValue: string);
+begin
+if AName = 'gridFornecedores' then
+  begin
+
+
+    buscarNome;
+
+
+
+    while not serv.query_forn.Eof do
+    begin
+      VValue := VValue +
+
+      '<tr><td>' + serv.query_forn.FieldByName('id').AsString + '</td>' +sLineBreak+
+      '<td>' + serv.query_forn.FieldByName('nome').AsString + '</td>' +sLineBreak+
+      '<td>' + serv.query_forn.FieldByName('produtos').AsString + '</td>' +sLineBreak+
+      '<td>' + serv.query_forn.FieldByName('telefone').AsString + '</td>' +sLineBreak+
+      '<td>' + serv.query_forn.FieldByName('endereco').AsString + '</td>' +sLineBreak+
+
+      '<td>' + '<button type="button" class="btn btn-info mr-2" onclick="return pegarPosicao('+serv.query_forn.FieldByName('id').AsString+', ''alterar'')">Editar</button>' +
+      '<button type="button" class="btn btn-danger" onclick="return pegarPosicao('+serv.query_forn.FieldByName('id').AsString+', ''excluir'')">Excluir</button>' +
+      '</td>' +sLineBreak+ '</tr>';
+
+      serv.query_forn.Next;
+
+    end;
+
+  end;
+end;
+
+procedure TFRMFORNECEDORES.limparCampos;
+begin
+TXTtelefone.Text := '';
+TXTendereco.Text := '';
+TXTNOME.Text := '';
+TXTPRODUTOS.Text := '';
+end;
+
+procedure TFRMFORNECEDORES.MENUClick(Sender: TObject);
+begin
+ TFRMMENU.Create(webApplication).Show;
+end;
+
+end.

@@ -1,0 +1,84 @@
+unit Login;
+
+interface
+
+uses
+  Classes, SysUtils, IWAppForm, IWApplication, IWColor, IWTypes, IWVCLComponent,
+  IWBaseLayoutComponent, IWBaseContainerLayout, IWContainerLayout,
+  IWTemplateProcessorHTML, Vcl.Controls, IWVCLBaseControl, IWBaseControl,
+  IWBaseHTMLControl, IWControl, IWCompButton, IWCompEdit;
+
+type
+  TFRMLOGIN = class(TIWAppForm)
+    IWTemplateProcessorHTML1: TIWTemplateProcessorHTML;
+    BTNLOGIN: TIWButton;
+    TXTUSUARIO: TIWEdit;
+    TXTSENHA: TIWEdit;
+    procedure BTNLOGINAsyncClick(Sender: TObject; EventParams: TStringList);
+
+    procedure BTClick(Sender: TObject);
+    procedure IWTemplateProcessorHTML1UnknownTag(const AName: string;
+      var VValue: string);
+  public
+  end;
+
+implementation
+
+{$R *.dfm}
+
+uses ServerController;
+
+
+procedure TFRMLOGIN.BTClick(Sender: TObject);
+begin
+ webApplication.ShowMessage('Preencha o Campo Usuário');
+end;
+
+procedure TFRMLOGIN.BTNLOGINAsyncClick(Sender: TObject;
+  EventParams: TStringList);
+begin
+
+if Trim(TXTUSUARIO.Text) = '' then
+begin
+   webApplication.ShowMessage('Preencha o Campo Usuário');
+   TXTUSUARIO.SetFocus;
+   exit;
+end;
+
+if Trim(TXTSENHA.Text) = '' then
+begin
+   webApplication.ShowMessage('Preencha o Campo Senha');
+   TXTSENHA.SetFocus;
+   exit;
+end;
+
+
+    serv.query_login.Close;
+    serv.query_login.SQL.Clear;
+    serv.query_login.SQL.Add('SELECT * from usuarios where usuario = :usuario and senha = :senha');
+    serv.query_login.ParamByName('usuario').Value := txtUsuario.Text;
+    serv.query_login.ParamByName('senha').Value := txtSenha.Text;
+    serv.query_login.Open();
+
+    if not serv.query_login.IsEmpty then
+    begin
+
+       end
+       else
+       begin
+        webApplication.ShowMessage('Dados Incorretos!!');
+    end;
+
+end;
+
+
+procedure TFRMLOGIN.IWTemplateProcessorHTML1UnknownTag(const AName: string;
+  var VValue: string);
+begin
+ webApplication.ShowMessage('Dados Incorretos!!');
+end;
+
+initialization
+  TFRMLOGIN.SetAsMainForm;
+
+end.

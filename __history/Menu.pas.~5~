@@ -1,0 +1,40 @@
+unit Menu;
+
+interface
+
+uses
+  Classes, SysUtils, IWAppForm, IWApplication, IWColor, IWTypes, IWVCLComponent,
+  IWBaseLayoutComponent, IWBaseContainerLayout, IWContainerLayout,
+  IWTemplateProcessorHTML, Vcl.Controls, IWVCLBaseControl, IWBaseControl,
+  IWBaseHTMLControl, IWControl, IWCompLabel, IWHTMLControls;
+
+type
+  TFRMMENU = class(TIWAppForm)
+    IWTemplateProcessorHTML1: TIWTemplateProcessorHTML;
+    USUARIOS: TIWLink;
+    SAIR: TIWLink;
+    USUARIOSMENU: TIWLink;
+    FORNECEDORES: TIWLink;
+    procedure SAIRClick(Sender: TObject);
+    procedure USUARIOSClick(Sender: TObject);
+  public
+  end;
+
+implementation
+
+{$R *.dfm}
+
+uses ServerController, Login, Usuarios, Fornecedores;
+
+
+procedure TFRMMENU.SAIRClick(Sender: TObject);
+begin
+ TFRMLOGIN.Create(webApplication).Show;
+end;
+
+procedure TFRMMENU.USUARIOSClick(Sender: TObject);
+begin
+ TFRMfornecedores.Create(webApplication).Show;
+end;
+
+end.

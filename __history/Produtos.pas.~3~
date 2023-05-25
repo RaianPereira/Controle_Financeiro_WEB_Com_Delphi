@@ -1,0 +1,147 @@
+unit Produtos;
+
+interface
+
+uses
+  Classes, SysUtils, IWAppForm, IWApplication, IWColor, IWTypes, IWVCLComponent,
+  IWBaseLayoutComponent, IWBaseContainerLayout, IWContainerLayout,
+  IWTemplateProcessorHTML, IWCompListbox, IWHTMLControls, IWCompEdit,
+  Vcl.Controls, IWVCLBaseControl, IWBaseControl, IWBaseHTMLControl, IWControl,
+  IWCompButton;
+
+type
+  TFRMPRODUTOS = class(TIWAppForm)
+    IWTemplateProcessorHTML1: TIWTemplateProcessorHTML;
+    BTNSALVAR: TIWButton;
+    BTNEDITAR: TIWButton;
+    BTNNOVO: TIWButton;
+    BTNCANCELAR: TIWButton;
+    BTNEXCLUIR: TIWButton;
+    txtId: TIWEdit;
+    TXTNOME: TIWEdit;
+    TXTDESCRICAO: TIWEdit;
+    TXTVALOR: TIWEdit;
+    BTNBUSCAR: TIWButton;
+    TXTBUSCAR: TIWEdit;
+    MENU: TIWLink;
+    TXTESTOQUE: TIWEdit;
+    CBFORNECEDOR: TIWComboBox;
+
+      procedure limparCampos;
+    procedure associarCampos();
+
+    procedure buscarTudo();
+    procedure buscarNome();
+    procedure carregarCombobox();
+    procedure IWTemplateProcessorHTML1UnknownTag(const AName: string;
+      var VValue: string);
+
+  public
+  end;
+
+implementation
+
+{$R *.dfm}
+
+uses ServerController;
+
+
+{ TFRMPRODUTOS }
+
+procedure TFRMPRODUTOS.associarCampos;
+begin
+serv.query_produtos.FieldByName('nome').Value := txtnome.Text;
+serv.query_produtos.FieldByName('descricao').Value := txtdescricao.Text;
+serv.query_produtos.FieldByName('valor').Value := txtvalor.Text;
+serv.query_produtos.FieldByName('estoque').Value := txtestoque.text;
+serv.query_produtos.FieldByName('id_fornecedor').Value := Integer(CBFORNECEDOR.Items.Objects[CBFORNECEDOR.ItemIndex]);
+
+end;
+
+procedure TFRMPRODUTOS.buscarNome;
+begin
+serv.query_produtos.Active := false;
+serv.query_produtos.Active := true;
+serv.query_produtos.SQL.Clear;
+serv.query_produtos.SQL.Add('SELECT p.id, p.nome, p.descricao, p.valor, p.estoque, p.id_fornecedor, p.imagem, f.nome as nome_forn FROM produtos as p INNER JOIN fornecedores as f on p.id_fornecedor = f.id where p.nome LIKE :nome order by p.nome asc');
+serv.query_produtos.ParamByName('nome').Value := txtBuscar.Text + '%';
+serv.query_produtos.Open();
+serv.query_produtos.First;
+end;
+
+procedure TFRMPRODUTOS.buscarTudo;
+begin
+serv.query_produtos.Active := false;
+serv.query_produtos.Active := true;
+serv.query_produtos.SQL.Clear;
+serv.query_produtos.SQL.Add('SELECT p.id, p.nome, p.descricao, p.valor, p.estoque, p.id_fornecedor, p.imagem, f.nome as nome_forn FROM produtos as p INNER JOIN fornecedores as f on p.id_fornecedor = f.id order by p.nome asc');
+//serv.query_produtos.ParamByName('nome').Value := txtBuscar.Text + '%';
+serv.query_produtos.Open();
+serv.query_produtos.First;
+end;
+
+procedure TFRMPRODUTOS.carregarCombobox;
+begin
+
+serv.query_forn.Close;
+serv.query_forn.Active := true;
+
+CBFORNECEDOR.Items.Clear;
+while not serv.query_forn.Eof do
+begin
+
+  //ESSA LINHA ABAIXO É PARA ADICIONAR APENAS UM ITEM A COMBOBOX
+  //CBFORNECEDOR.Items.Add(query_forn.FieldByName('nome').AsString);
+
+
+  //ESSA LINHA ABAIXO É PARA ADICIONAR MAIS COLUNAS DA TABELA A COMBOBOX
+  CBFORNECEDOR.Items.AddObject(serv.query_forn.FieldByName('nome').AsString, TObject(serv.query_forn.FieldByName('id').AsInteger));
+
+  serv.query_forn.Next;
+end;
+CBFORNECEDOR.ItemIndex := 0;
+
+end;
+
+procedure TFRMPRODUTOS.IWTemplateProcessorHTML1UnknownTag(const AName: string;
+  var VValue: string);
+begin
+if AName = 'gridProdutos' then
+  begin
+
+
+    buscarNome;
+
+
+
+    while not serv.query_produtos.Eof do
+    begin
+      VValue := VValue +
+
+      '<tr><td>' + serv.query_produtos.FieldByName('nome').AsString + '</td>' +sLineBreak+
+      '<td>' + serv.query_produtos.FieldByName('descricao').AsString + '</td>' +sLineBreak+
+      '<td>' + serv.query_produtos.FieldByName('valor').AsString + '</td>' +sLineBreak+
+      '<td>' + serv.query_produtos.FieldByName('estoque').AsString + '</td>' +sLineBreak+
+      '<td>' + serv.query_produtos.FieldByName('nome_forn').AsString + '</td>' +sLineBreak+
+      '<td>' + serv.query_produtos.FieldByName('imagem').AsString + '</td>' +sLineBreak+
+
+      '<td>' + '<button type="button" class="btn btn-info mr-2" onclick="return pegarPosicao('+serv.query_produtos.FieldByName('id').AsString+', ''alterar'')">Editar</button>' +
+      '<button type="button" class="btn btn-danger" onclick="return pegarPosicao('+serv.query_produtos.FieldByName('id').AsString+', ''excluir'')">Excluir</button>' +
+      '</td>' +sLineBreak+ '</tr>';
+
+      serv.query_produtos.Next;
+
+    end;
+
+  end;
+end;
+
+procedure TFRMPRODUTOS.limparCampos;
+begin
+txtNome.Text := '';
+txtDescricao.Text := '';
+txtvalor.Text := '';
+txtestoque.Text := '';
+end;
+
+end.

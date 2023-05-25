@@ -1,0 +1,74 @@
+unit Usuarios;
+
+interface
+
+uses
+  Classes, SysUtils, IWAppForm, IWApplication, IWColor, IWTypes, IWVCLComponent,
+  IWBaseLayoutComponent, IWBaseContainerLayout, IWContainerLayout,
+  IWTemplateProcessorHTML, IWCompButton, IWCompEdit, Vcl.Controls,
+  IWVCLBaseControl, IWBaseControl, IWBaseHTMLControl, IWControl, IWHTMLControls;
+
+type
+  TFRMUSUARIOS = class(TIWAppForm)
+    IWTemplateProcessorHTML1: TIWTemplateProcessorHTML;
+    MENU: TIWLink;
+    TXTBUSCAR: TIWEdit;
+    BTNBUSCAR: TIWButton;
+    procedure MENUClick(Sender: TObject);
+    procedure IWTemplateProcessorHTML1UnknownTag(const AName: string;
+      var VValue: string);
+  public
+  end;
+
+implementation
+
+{$R *.dfm}
+
+uses Menu, ServerController;
+
+
+procedure TFRMUSUARIOS.IWTemplateProcessorHTML1UnknownTag(const AName: string;
+  var VValue: string);
+begin
+
+if AName = 'gridUsuarios' then
+  begin
+
+
+    serv.query_login.Close;
+    serv.query_login.SQL.Clear;
+    serv.query_login.SQL.Add('SELECT * from usuarios order by nome asc');
+    //serv.query_login.ParamByName('usuario').Value := txtUsuario.Text;
+    //serv.query_login.ParamByName('senha').Value := txtSenha.Text;
+    serv.query_login.Open();
+
+
+
+    while not serv.query_login.Eof do
+    begin
+      VValue := VValue +
+
+      '<tr><td>' + serv.query_login.FieldByName('id').AsString + '</td>' +sLineBreak+
+      '<td>' + serv.query_login.FieldByName('nome').AsString + '</td>' +sLineBreak+
+      '<td>' + serv.query_login.FieldByName('usuario').AsString + '</td>' +sLineBreak+
+      '<td>' + serv.query_login.FieldByName('senha').AsString + '</td>' +sLineBreak+
+      '<td>' + serv.query_login.FieldByName('nivel').AsString + '</td>' +sLineBreak+
+
+      '<td>' + '<button type="button" class="btn btn-info mr-2" onclick="">Editar</button>' +
+      '<button type="button" class="btn btn-danger" onclick="">Excluir</button>' +
+      '</td>' +sLineBreak+ '</tr>';
+
+      serv.query_login.Next;
+
+    end;
+
+  end;
+
+end;
+
+procedure TFRMUSUARIOS.MENUClick(Sender: TObject);
+begin
+ TFRMMENU.Create(webApplication).Show;
+end;
+
+end.

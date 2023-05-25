@@ -1,0 +1,35 @@
+unit Fornecedores;
+
+interface
+
+uses
+  Classes, SysUtils, IWAppForm, IWApplication, IWColor, IWTypes, IWHTMLControls,
+  IWCompEdit, Vcl.Controls, IWVCLBaseControl, IWBaseControl, IWBaseHTMLControl,
+  IWControl, IWCompButton, IWVCLComponent, IWBaseLayoutComponent,
+  IWBaseContainerLayout, IWContainerLayout, IWTemplateProcessorHTML;
+
+type
+  TFRMFORNECEDORES = class(TIWAppForm)
+    IWTemplateProcessorHTML1: TIWTemplateProcessorHTML;
+    BTNSALVAR: TIWButton;
+    BTNEDITAR: TIWButton;
+    BTNNOVO: TIWButton;
+    BTNCANCELAR: TIWButton;
+    BTNEXCLUIR: TIWButton;
+    txtId: TIWEdit;
+    TXTNOME: TIWEdit;
+    TXTPRODUTOS: TIWEdit;
+    TXTTELEFONE: TIWEdit;
+    BTNBUSCAR: TIWButton;
+    TXTBUSCAR: TIWEdit;
+    MENU: TIWLink;
+    TXTENDERECO: TIWEdit;
+  public
+  end;
+
+implementation
+
+{$R *.dfm}
+
+
+end.

@@ -1,0 +1,37 @@
+unit Produtos;
+
+interface
+
+uses
+  Classes, SysUtils, IWAppForm, IWApplication, IWColor, IWTypes, IWVCLComponent,
+  IWBaseLayoutComponent, IWBaseContainerLayout, IWContainerLayout,
+  IWTemplateProcessorHTML, IWCompListbox, IWHTMLControls, IWCompEdit,
+  Vcl.Controls, IWVCLBaseControl, IWBaseControl, IWBaseHTMLControl, IWControl,
+  IWCompButton;
+
+type
+  TFRMPRODUTOS = class(TIWAppForm)
+    IWTemplateProcessorHTML1: TIWTemplateProcessorHTML;
+    BTNSALVAR: TIWButton;
+    BTNEDITAR: TIWButton;
+    BTNNOVO: TIWButton;
+    BTNCANCELAR: TIWButton;
+    BTNEXCLUIR: TIWButton;
+    txtId: TIWEdit;
+    TXTNOME: TIWEdit;
+    TXTDESCRICAO: TIWEdit;
+    TXTVALOR: TIWEdit;
+    BTNBUSCAR: TIWButton;
+    TXTBUSCAR: TIWEdit;
+    MENU: TIWLink;
+    TXTESTOQUE: TIWEdit;
+    CBFORNECEDOR: TIWComboBox;
+  public
+  end;
+
+implementation
+
+{$R *.dfm}
+
+
+end.

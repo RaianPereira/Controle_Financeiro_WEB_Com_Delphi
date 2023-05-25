@@ -1,0 +1,227 @@
+object FRMPRODUTOS: TFRMPRODUTOS
+  Left = 0
+  Top = 0
+  Width = 555
+  Height = 400
+  RenderInvisibleControls = True
+  AllowPageAccess = True
+  ConnectionMode = cmAny
+  BGColor = clWebWHITESMOKE
+  Background.Fixed = False
+  LayoutMgr = IWTemplateProcessorHTML1
+  HandleTabs = False
+  LeftToRight = True
+  LockUntilLoaded = True
+  LockOnSubmit = True
+  ShowHint = True
+  XPTheme = True
+  DesignLeft = 2
+  DesignTop = 2
+  object BTNSALVAR: TIWButton
+    Left = 432
+    Top = 104
+    Width = 75
+    Height = 25
+    Css = 'btn btn-success'
+    Caption = 'Salvar'
+    Color = clBtnFace
+    Font.Color = clNone
+    Font.Size = 10
+    Font.Style = []
+    FriendlyName = 'BTNSALVAR'
+    TabOrder = 0
+  end
+  object BTNEDITAR: TIWButton
+    Left = 432
+    Top = 135
+    Width = 75
+    Height = 25
+    Css = 'btn btn-primary'
+    Caption = 'Editar'
+    Color = clBtnFace
+    Font.Color = clNone
+    Font.Size = 10
+    Font.Style = []
+    FriendlyName = 'BTNEDITAR'
+    TabOrder = 1
+  end
+  object BTNNOVO: TIWButton
+    Left = 432
+    Top = 166
+    Width = 75
+    Height = 25
+    Caption = 'Novo'
+    Color = clBtnFace
+    Font.Color = clNone
+    Font.Size = 10
+    Font.Style = []
+    FriendlyName = 'BTNNOVO'
+    TabOrder = 2
+  end
+  object BTNCANCELAR: TIWButton
+    Left = 432
+    Top = 197
+    Width = 75
+    Height = 25
+    Css = 'btn btn-secondary'
+    Caption = 'Cancelar'
+    Color = clBtnFace
+    Font.Color = clNone
+    Font.Size = 10
+    Font.Style = []
+    FriendlyName = 'BTNCANCELAR'
+    TabOrder = 3
+  end
+  object BTNEXCLUIR: TIWButton
+    Left = 432
+    Top = 223
+    Width = 75
+    Height = 25
+    Caption = 'Excluir'
+    Confirmation = 'Deseja Excluir?'
+    Color = clBtnFace
+    Font.Color = clNone
+    Font.Size = 10
+    Font.Style = []
+    FriendlyName = 'BTNEXCLUIR'
+    TabOrder = 4
+  end
+  object txtId: TIWEdit
+    Left = 224
+    Top = 108
+    Width = 121
+    Height = 21
+    StyleRenderOptions.RenderBorder = False
+    Font.Color = clNone
+    Font.Size = 10
+    Font.Style = []
+    FriendlyName = 'txtId'
+    SubmitOnAsyncEvent = True
+    TabOrder = 5
+    Text = 'TXTID'
+  end
+  object TXTNOME: TIWEdit
+    Left = 224
+    Top = 146
+    Width = 121
+    Height = 21
+    Css = 'form-control'
+    StyleRenderOptions.RenderBorder = False
+    Font.Color = clNone
+    Font.Size = 10
+    Font.Style = []
+    FriendlyName = 'TXTNOME'
+    SubmitOnAsyncEvent = True
+    TabOrder = 6
+  end
+  object TXTDESCRICAO: TIWEdit
+    Left = 224
+    Top = 173
+    Width = 121
+    Height = 21
+    Css = 'form-control'
+    StyleRenderOptions.RenderBorder = False
+    Font.Color = clNone
+    Font.Size = 10
+    Font.Style = []
+    FriendlyName = 'TXTDESCRICAO'
+    SubmitOnAsyncEvent = True
+    TabOrder = 7
+  end
+  object TXTVALOR: TIWEdit
+    Left = 224
+    Top = 200
+    Width = 121
+    Height = 21
+    Css = 'form-control'
+    StyleRenderOptions.RenderBorder = False
+    Font.Color = clNone
+    Font.Size = 10
+    Font.Style = []
+    FriendlyName = 'TXTVALOR'
+    SubmitOnAsyncEvent = True
+    TabOrder = 8
+  end
+  object BTNBUSCAR: TIWButton
+    Left = 256
+    Top = 51
+    Width = 75
+    Height = 25
+    Css = 'btn btn-outline-light'
+    Caption = 'Buscar'
+    Color = clBtnFace
+    Font.Color = clNone
+    Font.Size = 10
+    Font.Style = []
+    FriendlyName = 'BTNBUSCAR'
+    TabOrder = 9
+  end
+  object TXTBUSCAR: TIWEdit
+    Left = 256
+    Top = 24
+    Width = 121
+    Height = 21
+    Hint = 'BUSCAR'
+    Css = 'form-control'
+    StyleRenderOptions.RenderBorder = False
+    Font.Color = clNone
+    Font.Size = 10
+    Font.Style = []
+    FriendlyName = 'TXTBUSCAR'
+    SubmitOnAsyncEvent = True
+    TabOrder = 10
+  end
+  object MENU: TIWLink
+    Left = 432
+    Top = 24
+    Width = 97
+    Height = 17
+    Css = 'navbar-brand'
+    Alignment = taLeftJustify
+    Color = clNone
+    Font.Color = clNone
+    Font.Size = 10
+    Font.Style = [fsUnderline]
+    HasTabOrder = True
+    DoSubmitValidation = False
+    FriendlyName = 'MENU'
+    TabOrder = 11
+    RawText = False
+    Caption = 'Menu Principal'
+  end
+  object TXTESTOQUE: TIWEdit
+    Left = 224
+    Top = 227
+    Width = 121
+    Height = 21
+    Css = 'form-control'
+    StyleRenderOptions.RenderBorder = False
+    Font.Color = clNone
+    Font.Size = 10
+    Font.Style = []
+    FriendlyName = 'TXTTELEFONE'
+    SubmitOnAsyncEvent = True
+    TabOrder = 12
+  end
+  object CBFORNECEDOR: TIWComboBox
+    Left = 224
+    Top = 254
+    Width = 121
+    Height = 21
+    Css = 'form-control'
+    StyleRenderOptions.RenderBorder = False
+    Font.Color = clNone
+    Font.Size = 10
+    Font.Style = []
+    TabOrder = 13
+    ItemIndex = -1
+    FriendlyName = 'CBFORNECEDOR'
+    NoSelectionText = '-- No Selection --'
+  end
+  object IWTemplateProcessorHTML1: TIWTemplateProcessorHTML
+    TagType = ttIntraWeb
+    RenderStyles = False
+    Left = 72
+    Top = 24
+  end
+end

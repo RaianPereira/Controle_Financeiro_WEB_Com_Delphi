@@ -1,0 +1,67 @@
+unit Menu;
+
+interface
+
+uses
+  Classes, SysUtils, IWAppForm, IWApplication, IWColor, IWTypes, IWVCLComponent,
+  IWBaseLayoutComponent, IWBaseContainerLayout, IWContainerLayout,
+  IWTemplateProcessorHTML, Vcl.Controls, IWVCLBaseControl, IWBaseControl,
+  IWBaseHTMLControl, IWControl, IWCompLabel, IWHTMLControls;
+
+type
+  TFRMMENU = class(TIWAppForm)
+    IWTemplateProcessorHTML1: TIWTemplateProcessorHTML;
+    USUARIOS: TIWLink;
+    SAIR: TIWLink;
+    USUARIOSMENU: TIWLink;
+    FORNECEDORES: TIWLink;
+    PRODUTOS: TIWLink;
+    GASTOS: TIWLink;
+    RELPRODUTOS: TIWLink;
+    procedure SAIRClick(Sender: TObject);
+    procedure USUARIOSClick(Sender: TObject);
+    procedure PRODUTOSClick(Sender: TObject);
+    procedure FORNECEDORESClick(Sender: TObject);
+    procedure USUARIOSMENUClick(Sender: TObject);
+    procedure GASTOSClick(Sender: TObject);
+  public
+  end;
+
+implementation
+
+{$R *.dfm}
+
+uses ServerController, Login, Usuarios, Fornecedores, Produtos, Gastos;
+
+
+procedure TFRMMENU.FORNECEDORESClick(Sender: TObject);
+begin
+TFRMFORNECEDORES.Create(webApplication).Show;
+end;
+
+procedure TFRMMENU.GASTOSClick(Sender: TObject);
+begin
+TFRMGASTOS.Create(webApplication).Show;
+end;
+
+procedure TFRMMENU.PRODUTOSClick(Sender: TObject);
+begin
+TFRMPRODUTOS.Create(webApplication).Show;
+end;
+
+procedure TFRMMENU.SAIRClick(Sender: TObject);
+begin
+ TFRMLOGIN.Create(webApplication).Show;
+end;
+
+procedure TFRMMENU.USUARIOSClick(Sender: TObject);
+begin
+TFRMUSUARIOS.Create(webApplication).Show;
+end;
+
+procedure TFRMMENU.USUARIOSMENUClick(Sender: TObject);
+begin
+TFRMUSUARIOS.Create(webApplication).Show;
+end;
+
+end.

@@ -1,0 +1,240 @@
+object FRMGASTOS: TFRMGASTOS
+  Left = 0
+  Top = 0
+  Width = 555
+  Height = 287
+  RenderInvisibleControls = True
+  AllowPageAccess = True
+  ConnectionMode = cmAny
+  Background.Fixed = False
+  LayoutMgr = IWTemplateProcessorHTML1
+  HandleTabs = False
+  LeftToRight = True
+  LockUntilLoaded = True
+  LockOnSubmit = True
+  ShowHint = True
+  XPTheme = True
+  DesignLeft = 2
+  DesignTop = 2
+  object BTNBUSCAR: TIWButton
+    Left = 256
+    Top = 51
+    Width = 75
+    Height = 25
+    Css = 'btn btn-outline-light'
+    Caption = 'Buscar'
+    Color = clBtnFace
+    Font.Color = clNone
+    Font.Size = 10
+    Font.Style = []
+    FriendlyName = 'BTNBUSCAR'
+    TabOrder = 0
+    OnClick = BTNBUSCARClick
+  end
+  object TXTBUSCAR: TIWEdit
+    Left = 256
+    Top = 24
+    Width = 121
+    Height = 21
+    Hint = 'BUSCAR'
+    OnHTMLTag = TXTBUSCARHTMLTag
+    Css = 'form-control'
+    StyleRenderOptions.RenderBorder = False
+    Font.Color = clNone
+    Font.Size = 10
+    Font.Style = []
+    FriendlyName = 'TXTBUSCAR'
+    SubmitOnAsyncEvent = True
+    TabOrder = 1
+  end
+  object MENU: TIWLink
+    Left = 432
+    Top = 24
+    Width = 97
+    Height = 17
+    Css = 'navbar-brand'
+    Alignment = taLeftJustify
+    Color = clNone
+    Font.Color = clNone
+    Font.Size = 10
+    Font.Style = [fsUnderline]
+    HasTabOrder = True
+    DoSubmitValidation = False
+    FriendlyName = 'MENU'
+    OnClick = MENUClick
+    TabOrder = 2
+    RawText = False
+    Caption = 'Menu Principal'
+  end
+  object BTNSALVAR: TIWButton
+    Left = 432
+    Top = 104
+    Width = 75
+    Height = 25
+    Css = 'btn btn-success'
+    Caption = 'Salvar'
+    Color = clBtnFace
+    Font.Color = clNone
+    Font.Size = 10
+    Font.Style = []
+    FriendlyName = 'BTNSALVAR'
+    TabOrder = 3
+    OnAsyncClick = BTNSALVARAsyncClick
+  end
+  object BTNEDITAR: TIWButton
+    Left = 432
+    Top = 135
+    Width = 75
+    Height = 25
+    Css = 'btn btn-primary'
+    Caption = 'Editar'
+    Color = clBtnFace
+    Font.Color = clNone
+    Font.Size = 10
+    Font.Style = []
+    FriendlyName = 'BTNEDITAR'
+    TabOrder = 4
+    OnAsyncClick = BTNEDITARAsyncClick
+  end
+  object BTNNOVO: TIWButton
+    Left = 432
+    Top = 166
+    Width = 75
+    Height = 25
+    Caption = 'Novo'
+    Color = clBtnFace
+    Font.Color = clNone
+    Font.Size = 10
+    Font.Style = []
+    FriendlyName = 'BTNNOVO'
+    TabOrder = 5
+    OnAsyncClick = BTNNOVOAsyncClick
+  end
+  object BTNCANCELAR: TIWButton
+    Left = 432
+    Top = 197
+    Width = 75
+    Height = 25
+    Css = 'btn btn-secondary'
+    Caption = 'Cancelar'
+    Color = clBtnFace
+    Font.Color = clNone
+    Font.Size = 10
+    Font.Style = []
+    FriendlyName = 'BTNCANCELAR'
+    TabOrder = 6
+    OnClick = BTNCANCELARClick
+  end
+  object BTNEXCLUIR: TIWButton
+    Left = 432
+    Top = 223
+    Width = 75
+    Height = 25
+    Caption = 'Excluir'
+    Confirmation = 'Deseja Excluir?'
+    Color = clBtnFace
+    Font.Color = clNone
+    Font.Size = 10
+    Font.Style = []
+    FriendlyName = 'BTNEXCLUIR'
+    TabOrder = 7
+    OnClick = BTNEXCLUIRClick
+  end
+  object TXTMOTIVO: TIWEdit
+    Left = 224
+    Top = 146
+    Width = 121
+    Height = 21
+    Css = 'form-control'
+    StyleRenderOptions.RenderBorder = False
+    Font.Color = clNone
+    Font.Size = 10
+    Font.Style = []
+    FriendlyName = 'TXTMOTIVO'
+    SubmitOnAsyncEvent = True
+    TabOrder = 8
+  end
+  object TXTVALOR: TIWEdit
+    Left = 224
+    Top = 173
+    Width = 121
+    Height = 21
+    Css = 'form-control'
+    StyleRenderOptions.RenderBorder = False
+    Font.Color = clNone
+    Font.Size = 10
+    Font.Style = []
+    FriendlyName = 'TXTVALOR'
+    SubmitOnAsyncEvent = True
+    TabOrder = 9
+    OnAsyncChange = TXTVALORAsyncChange
+  end
+  object txtId: TIWEdit
+    Left = 16
+    Top = 244
+    Width = 121
+    Height = 21
+    StyleRenderOptions.RenderBorder = False
+    Font.Color = clNone
+    Font.Size = 10
+    Font.Style = []
+    FriendlyName = 'txtId'
+    SubmitOnAsyncEvent = True
+    TabOrder = 10
+    Text = 'TXTID'
+  end
+  object fd: TFDConnection
+    Params.Strings = (
+      'Database=financeiro'
+      'User_Name=root'
+      'Server=localhost'
+      'DriverID=MySQL')
+    Connected = True
+    LoginPrompt = False
+    Left = 24
+    Top = 16
+  end
+  object query_gastos: TFDQuery
+    Active = True
+    Connection = fd
+    SQL.Strings = (
+      'select * from gastos')
+    Left = 80
+    Top = 16
+    object query_gastosid: TFDAutoIncField
+      FieldName = 'id'
+      Origin = 'id'
+      ProviderFlags = [pfInWhere, pfInKey]
+    end
+    object query_gastosmotivo: TStringField
+      FieldName = 'motivo'
+      Origin = 'motivo'
+      Required = True
+      Size = 30
+    end
+    object query_gastosvalor: TBCDField
+      FieldName = 'valor'
+      Origin = 'valor'
+      Required = True
+      Precision = 10
+      Size = 2
+    end
+    object query_gastosfuncionario: TStringField
+      FieldName = 'funcionario'
+      Origin = 'funcionario'
+      Required = True
+    end
+    object query_gastosdata: TDateField
+      FieldName = 'data'
+      Origin = 'data'
+      Required = True
+    end
+  end
+  object IWTemplateProcessorHTML1: TIWTemplateProcessorHTML
+    TagType = ttIntraWeb
+    OnUnknownTag = IWTemplateProcessorHTML1UnknownTag
+    RenderStyles = False
+    Left = 72
+    Top = 88
+  end
+end

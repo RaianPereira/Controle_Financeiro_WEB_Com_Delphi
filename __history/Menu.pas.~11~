@@ -1,0 +1,106 @@
+unit Menu;
+
+interface
+
+uses
+  Classes, SysUtils, IWAppForm, IWApplication, IWColor, IWTypes, IWVCLComponent,
+  IWBaseLayoutComponent, IWBaseContainerLayout, IWContainerLayout,
+  IWTemplateProcessorHTML, Vcl.Controls, IWVCLBaseControl, IWBaseControl,
+  IWBaseHTMLControl, IWControl, IWCompLabel, IWHTMLControls, frxClass,
+  frxExportBaseDialog, frxExportHTML, frxDBSet, FireDAC.Stan.Intf,
+  FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
+  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
+  Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client, FireDAC.UI.Intf,
+  FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Phys, FireDAC.Phys.MySQL,
+  FireDAC.Phys.MySQLDef, FireDAC.VCLUI.Wait;
+
+type
+  TFRMMENU = class(TIWAppForm)
+    IWTemplateProcessorHTML1: TIWTemplateProcessorHTML;
+    USUARIOS: TIWLink;
+    SAIR: TIWLink;
+    USUARIOSMENU: TIWLink;
+    FORNECEDORES: TIWLink;
+    PRODUTOS: TIWLink;
+    GASTOS: TIWLink;
+    RELPRODUTOS: TIWLink;
+    frxHTMLExport1: TfrxHTMLExport;
+    rel_produtos: TfrxReport;
+    DSRelProdutos: TfrxDBDataset;
+    query_produtos: TFDQuery;
+    query_produtosid: TFDAutoIncField;
+    query_produtosnome: TStringField;
+    query_produtosdescricao: TStringField;
+    query_produtosvalor: TBCDField;
+    query_produtosestoque: TIntegerField;
+    query_produtosid_fornecedor: TIntegerField;
+    query_produtosimagem: TStringField;
+    query_produtosnome_forn: TStringField;
+    fd: TFDConnection;
+    procedure SAIRClick(Sender: TObject);
+    procedure USUARIOSClick(Sender: TObject);
+    procedure PRODUTOSClick(Sender: TObject);
+    procedure FORNECEDORESClick(Sender: TObject);
+    procedure USUARIOSMENUClick(Sender: TObject);
+    procedure GASTOSClick(Sender: TObject);
+    procedure RELPRODUTOSAsyncClick(Sender: TObject; EventParams: TStringList);
+  public
+  end;
+
+implementation
+
+{$R *.dfm}
+
+uses ServerController, Login, Usuarios, Fornecedores, Produtos, Gastos;
+
+
+procedure TFRMMENU.FORNECEDORESClick(Sender: TObject);
+begin
+TFRMFORNECEDORES.Create(webApplication).Show;
+end;
+
+procedure TFRMMENU.GASTOSClick(Sender: TObject);
+begin
+TFRMGASTOS.Create(webApplication).Show;
+end;
+
+procedure TFRMMENU.PRODUTOSClick(Sender: TObject);
+begin
+TFRMPRODUTOS.Create(webApplication).Show;
+end;
+
+procedure TFRMMENU.RELPRODUTOSAsyncClick(Sender: TObject;
+  EventParams: TStringList);
+ var
+oExportfilter : TfrxCustomExportFilter;
+begin
+
+
+
+
+   oExportfilter := TfrxCustomExportFilter(frxHTMLexport1);
+   oExportFilter.ShowDialog := False;
+   oExportFilter.FileName := GetCurrentDir + '\wwwroot\rel\produtos.html';
+   rel_produtos.PrepareReport(True);
+   rel_produtos.Export(oExportFilter);
+   WebApplication.CallBackResponse.AddJavaScriptToExecute('window.open("rel/produtos.html");');
+
+
+end;
+
+procedure TFRMMENU.SAIRClick(Sender: TObject);
+begin
+ TFRMLOGIN.Create(webApplication).Show;
+end;
+
+procedure TFRMMENU.USUARIOSClick(Sender: TObject);
+begin
+TFRMUSUARIOS.Create(webApplication).Show;
+end;
+
+procedure TFRMMENU.USUARIOSMENUClick(Sender: TObject);
+begin
+TFRMUSUARIOS.Create(webApplication).Show;
+end;
+
+end.

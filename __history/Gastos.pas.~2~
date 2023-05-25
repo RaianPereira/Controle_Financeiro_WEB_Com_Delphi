@@ -1,0 +1,135 @@
+unit Gastos;
+
+interface
+
+uses
+  Classes, SysUtils, IWAppForm, IWApplication, IWColor, IWTypes,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf,
+  FireDAC.Phys.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async,
+  FireDAC.Phys, FireDAC.Phys.MySQL, FireDAC.Phys.MySQLDef, FireDAC.VCLUI.Wait,
+  FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.DApt,
+  IWHTMLControls, IWCompEdit, Vcl.Controls, IWVCLBaseControl, IWBaseControl,
+  IWBaseHTMLControl, IWControl, IWCompButton, IWVCLComponent,
+  IWBaseLayoutComponent, IWBaseContainerLayout, IWContainerLayout,
+  IWTemplateProcessorHTML, Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client;
+
+type
+  TFRMGASTOS = class(TIWAppForm)
+    fd: TFDConnection;
+    query_gastos: TFDQuery;
+    query_gastosid: TFDAutoIncField;
+    query_gastosmotivo: TStringField;
+    query_gastosvalor: TBCDField;
+    query_gastosfuncionario: TStringField;
+    query_gastosdata: TDateField;
+    IWTemplateProcessorHTML1: TIWTemplateProcessorHTML;
+    BTNBUSCAR: TIWButton;
+    TXTBUSCAR: TIWEdit;
+    MENU: TIWLink;
+    BTNSALVAR: TIWButton;
+    BTNEDITAR: TIWButton;
+    BTNNOVO: TIWButton;
+    BTNCANCELAR: TIWButton;
+    BTNEXCLUIR: TIWButton;
+    TXTMOTIVO: TIWEdit;
+    TXTVALOR: TIWEdit;
+    procedure TXTVALORAsyncChange(Sender: TObject; EventParams: TStringList);
+    procedure IWTemplateProcessorHTML1UnknownTag(const AName: string;
+
+
+      var VValue: string);
+  public
+
+    procedure limparCampos;
+    procedure associarCampos();
+
+
+    procedure buscarData();
+
+  end;
+
+implementation
+
+{$R *.dfm}
+
+uses ServerController;
+
+
+procedure TFRMGASTOS.associarCampos;
+begin
+query_gastos.FieldByName('motivo').Value := txtMotivo.Text;
+query_gastos.FieldByName('funcionario').Value := nomeUsuario;
+query_gastos.FieldByName('valor').Value := txtvalor.Text;
+query_gastos.FieldByName('data').Value := Date;
+
+end;
+
+procedure TFRMGASTOS.buscarData;
+begin
+query_gastos.Active := false;
+query_gastos.Active := true;
+query_gastos.SQL.Clear;
+query_gastos.SQL.Add('SELECT * FROM gastos where data = :data');
+query_gastos.ParamByName('data').Value := txtBuscar.Text + '%';
+query_gastos.Open();
+query_gastos.First;
+end;
+
+
+
+procedure TFRMGASTOS.IWTemplateProcessorHTML1UnknownTag(const AName: string;
+  var VValue: string);
+begin
+if AName = 'gridProdutos' then
+  begin
+
+
+    buscarData;
+
+
+
+    while not query_produtos.Eof do
+    begin
+      VValue := VValue +
+
+      '<tr><td>' + query_produtos.FieldByName('nome').AsString + '</td>' +sLineBreak+
+      '<td>' + query_produtos.FieldByName('descricao').AsString + '</td>' +sLineBreak+
+      '<td>' + query_produtos.FieldByName('valor').AsString + '</td>' +sLineBreak+
+      '<td>' + query_produtos.FieldByName('estoque').AsString + '</td>' +sLineBreak+
+      '<td>' + query_produtos.FieldByName('nome_forn').AsString + '</td>' +sLineBreak+
+      '<td><img src="img/' + query_produtos.FieldByName('imagem').AsString + '" width="60"></td>' +sLineBreak+
+
+      '<td>' + '<button type="button" class="btn btn-info mr-2" onclick="return pegarPosicao('+query_produtos.FieldByName('id').AsString+', ''alterar'')">Editar</button>' +
+      '<button type="button" class="btn btn-danger" onclick="return pegarPosicao('+query_produtos.FieldByName('id').AsString+', ''excluir'')">Excluir</button>' +
+      '</td>' +sLineBreak+ '</tr>';
+
+      query_produtos.Next;
+
+    end;
+
+  end;
+end;
+
+procedure TFRMGASTOS.limparCampos;
+begin
+txtMotivo.Text := '';
+txtValor.Text := '';
+end;
+
+procedure TFRMGASTOS.TXTVALORAsyncChange(Sender: TObject;
+  EventParams: TStringList);
+var
+  numero : double;
+begin
+
+if not TryStrToFloat(txtValor.Text, numero) then
+  begin
+  webApplication.ShowMessage('Digite Apenas Números!');
+  txtValor.Text := '';
+  txtValor.SetFocus;
+  end;
+
+
+end;
+
+end.

@@ -1,0 +1,321 @@
+unit Produtos;
+
+interface
+
+uses
+  Classes, SysUtils, IWAppForm, IWApplication, IWColor, IWTypes, IWVCLComponent,
+  IWBaseLayoutComponent, IWBaseContainerLayout, IWContainerLayout,
+  IWTemplateProcessorHTML, IWCompListbox, IWHTMLControls, IWCompEdit,
+  Vcl.Controls, IWVCLBaseControl, IWBaseControl, IWBaseHTMLControl, IWControl,
+  IWCompButton, FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
+  FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
+  FireDAC.Stan.Async, FireDAC.DApt, FireDAC.UI.Intf, FireDAC.Stan.Def,
+  FireDAC.Stan.Pool, FireDAC.Phys, FireDAC.Phys.MySQL, FireDAC.Phys.MySQLDef,
+  FireDAC.VCLUI.Wait, Data.DB, FireDAC.Comp.Client, FireDAC.Comp.DataSet,
+  Vcl.Imaging.jpeg, IWCompExtCtrls, IWCompFileUploader;
+
+type
+  TFRMPRODUTOS = class(TIWAppForm)
+    IWTemplateProcessorHTML1: TIWTemplateProcessorHTML;
+    BTNSALVAR: TIWButton;
+    BTNEDITAR: TIWButton;
+    BTNNOVO: TIWButton;
+    BTNCANCELAR: TIWButton;
+    BTNEXCLUIR: TIWButton;
+    txtId: TIWEdit;
+    TXTNOME: TIWEdit;
+    TXTDESCRICAO: TIWEdit;
+    TXTVALOR: TIWEdit;
+    BTNBUSCAR: TIWButton;
+    TXTBUSCAR: TIWEdit;
+    MENU: TIWLink;
+    TXTESTOQUE: TIWEdit;
+    CBFORNECEDOR: TIWComboBox;
+    query_forn: TFDQuery;
+    query_fornid: TFDAutoIncField;
+    query_fornnome: TStringField;
+    query_fornprodutos: TStringField;
+    query_forntelefone: TStringField;
+    query_fornendereco: TStringField;
+    query_produtos: TFDQuery;
+    query_produtosid: TFDAutoIncField;
+    query_produtosnome: TStringField;
+    query_produtosdescricao: TStringField;
+    query_produtosvalor: TBCDField;
+    query_produtosestoque: TIntegerField;
+    query_produtosid_fornecedor: TIntegerField;
+    query_produtosimagem: TStringField;
+    query_produtosnome_forn: TStringField;
+    fd: TFDConnection;
+    FILEUPLOADER: TIWFileUploader;
+    BTNIMAGEM: TIWButton;
+    IMG: TIWImage;
+
+      procedure limparCampos;
+    procedure associarCampos();
+
+    procedure buscarTudo();
+    procedure buscarNome();
+    procedure carregarCombobox();
+    procedure IWTemplateProcessorHTML1UnknownTag(const AName: string;
+      var VValue: string);
+    procedure BTNNOVOAsyncClick(Sender: TObject; EventParams: TStringList);
+    procedure BTNSALVARAsyncClick(Sender: TObject; EventParams: TStringList);
+    procedure TXTVALORAsyncChange(Sender: TObject; EventParams: TStringList);
+    procedure TXTESTOQUEAsyncChange(Sender: TObject; EventParams: TStringList);
+    procedure BTNBUSCARClick(Sender: TObject);
+    procedure BTNCANCELARClick(Sender: TObject);
+    procedure BTNEDITARAsyncClick(Sender: TObject; EventParams: TStringList);
+    procedure BTNEXCLUIRClick(Sender: TObject);
+    procedure FILEUPLOADERAsyncUploadCompleted(Sender: TObject; var DestPath,
+      FileName: string; var SaveFile, Overwrite: Boolean);
+    procedure BTNIMAGEMAsyncClick(Sender: TObject; EventParams: TStringList);
+
+  public
+
+  var
+  nomeArquivo : string;
+
+  end;
+
+implementation
+
+{$R *.dfm}
+
+uses ServerController;
+
+
+{ TFRMPRODUTOS }
+
+procedure TFRMPRODUTOS.associarCampos;
+begin
+query_produtos.FieldByName('nome').Value := txtnome.Text;
+query_produtos.FieldByName('descricao').Value := txtdescricao.Text;
+query_produtos.FieldByName('valor').Value := txtvalor.Text;
+query_produtos.FieldByName('estoque').Value := txtestoque.text;
+query_produtos.FieldByName('id_fornecedor').Value := Integer(CBFORNECEDOR.Items.Objects[CBFORNECEDOR.ItemIndex]);
+query_produtos.FieldByName('imagem').Value := nomeArquivo;
+
+end;
+
+procedure TFRMPRODUTOS.BTNBUSCARClick(Sender: TObject);
+begin
+buscarNome;
+end;
+
+procedure TFRMPRODUTOS.BTNCANCELARClick(Sender: TObject);
+begin
+
+WebApplication.CallBackResponse.AddJavaScriptToExecute('$(''#EditaDados'').modal(''hide'');');
+
+end;
+
+procedure TFRMPRODUTOS.BTNEDITARAsyncClick(Sender: TObject;
+  EventParams: TStringList);
+begin
+
+carregarCombobox;
+query_produtos.Locate('id', txtid.Text, []);
+query_produtos.Edit;
+
+
+txtnome.Text := query_produtos.FieldByName('nome').Value;
+
+
+TXTDESCRICAO.Text := query_produtos.FieldByName('descricao').Value;
+
+
+txtvalor.Text := query_produtos.FieldByName('valor').Value;
+
+
+txtestoque.text := query_produtos.FieldByName('estoque').Value;
+
+CBFORNECEDOR.Items[0] := query_produtos.FieldByName('nome_forn').Value;
+
+
+WebApplication.CallBackResponse.AddJavaScriptToExecute('$(''#EditaDados'').modal(''show'');');
+
+end;
+
+procedure TFRMPRODUTOS.BTNEXCLUIRClick(Sender: TObject);
+begin
+query_produtos.Locate('id', txtid.Text, []);
+query_produtos.Delete;
+buscarTudo;
+end;
+
+procedure TFRMPRODUTOS.BTNIMAGEMAsyncClick(Sender: TObject;
+  EventParams: TStringList);
+begin
+IMG.Picture.LoadFromFile(GetCurrentDir + '\wwwroot\img\' + nomeArquivo);
+end;
+
+procedure TFRMPRODUTOS.BTNNOVOAsyncClick(Sender: TObject;
+  EventParams: TStringList);
+begin
+carregarCombobox;
+limparCampos;
+query_produtos.Insert;
+WebApplication.CallBackResponse.AddJavaScriptToExecute('$(''#EditaDados'').modal(''show'');');
+nomeArquivo := 'sem-foto.jpg';
+end;
+
+procedure TFRMPRODUTOS.BTNSALVARAsyncClick(Sender: TObject;
+  EventParams: TStringList);
+begin
+
+if Trim(txtnome.Text) = '' then
+begin
+   webApplication.ShowMessage('Preencha o Campo Nome');
+   txtnome.SetFocus;
+   exit;
+end;
+
+if Trim(TXTDESCRICAO.Text) = '' then
+begin
+   webApplication.ShowMessage('Preencha o Campo Descrição');
+   TXTDESCRICAO.SetFocus;
+   exit;
+end;
+
+
+
+associarCampos();
+query_produtos.Post;
+limparCampos;
+buscarTudo;
+query_produtos.Insert;
+
+WebApplication.CallBackResponse.AddJavaScriptToExecute('$(''#EditaDados'').modal(''hide'');');
+WebApplication.CallBackResponse.AddJavaScriptToExecute('location.reload()');
+
+
+
+end;
+
+procedure TFRMPRODUTOS.buscarNome;
+begin
+query_produtos.Active := false;
+query_produtos.Active := true;
+query_produtos.SQL.Clear;
+query_produtos.SQL.Add('SELECT p.id, p.nome, p.descricao, p.valor, p.estoque, p.id_fornecedor, p.imagem, f.nome as nome_forn FROM produtos as p INNER JOIN fornecedores as f on p.id_fornecedor = f.id where p.nome LIKE :nome or p.descricao LIKE :nome order by p.nome asc');
+query_produtos.ParamByName('nome').Value := txtBuscar.Text + '%';
+query_produtos.Open();
+query_produtos.First;
+end;
+
+procedure TFRMPRODUTOS.buscarTudo;
+begin
+query_produtos.Active := false;
+query_produtos.Active := true;
+query_produtos.SQL.Clear;
+query_produtos.SQL.Add('SELECT p.id, p.nome, p.descricao, p.valor, p.estoque, p.id_fornecedor, p.imagem, f.nome as nome_forn FROM produtos as p INNER JOIN fornecedores as f on p.id_fornecedor = f.id order by p.nome asc');
+//serv.query_produtos.ParamByName('nome').Value := txtBuscar.Text + '%';
+query_produtos.Open();
+query_produtos.First;
+end;
+
+procedure TFRMPRODUTOS.carregarCombobox;
+begin
+
+query_forn.Close;
+query_forn.Active := true;
+
+CBFORNECEDOR.Items.Clear;
+while not query_forn.Eof do
+begin
+
+  //ESSA LINHA ABAIXO É PARA ADICIONAR APENAS UM ITEM A COMBOBOX
+  //CBFORNECEDOR.Items.Add(query_forn.FieldByName('nome').AsString);
+
+
+  //ESSA LINHA ABAIXO É PARA ADICIONAR MAIS COLUNAS DA TABELA A COMBOBOX
+  CBFORNECEDOR.Items.AddObject(query_forn.FieldByName('nome').AsString, TObject(query_forn.FieldByName('id').AsInteger));
+
+  query_forn.Next;
+end;
+CBFORNECEDOR.ItemIndex := 0;
+
+end;
+
+procedure TFRMPRODUTOS.FILEUPLOADERAsyncUploadCompleted(Sender: TObject;
+  var DestPath, FileName: string; var SaveFile, Overwrite: Boolean);
+begin
+FILEUPLOADER.SaveAll(GetCurrentDir + '\wwwroot\img\', True);
+SaveFile := false;
+nomeArquivo := FileName;
+end;
+
+procedure TFRMPRODUTOS.IWTemplateProcessorHTML1UnknownTag(const AName: string;
+  var VValue: string);
+begin
+if AName = 'gridProdutos' then
+  begin
+
+
+    buscarNome;
+
+
+
+    while not query_produtos.Eof do
+    begin
+      VValue := VValue +
+
+      '<tr><td>' + query_produtos.FieldByName('nome').AsString + '</td>' +sLineBreak+
+      '<td>' + query_produtos.FieldByName('descricao').AsString + '</td>' +sLineBreak+
+      '<td>' + query_produtos.FieldByName('valor').AsString + '</td>' +sLineBreak+
+      '<td>' + query_produtos.FieldByName('estoque').AsString + '</td>' +sLineBreak+
+      '<td>' + query_produtos.FieldByName('nome_forn').AsString + '</td>' +sLineBreak+
+      '<td><img src="img/' + query_produtos.FieldByName('imagem').AsString + '" width="60"></td>' +sLineBreak+
+
+      '<td>' + '<button type="button" class="btn btn-info mr-2" onclick="return pegarPosicao('+query_produtos.FieldByName('id').AsString+', ''alterar'')">Editar</button>' +
+      '<button type="button" class="btn btn-danger" onclick="return pegarPosicao('+query_produtos.FieldByName('id').AsString+', ''excluir'')">Excluir</button>' +
+      '</td>' +sLineBreak+ '</tr>';
+
+      query_produtos.Next;
+
+    end;
+
+  end;
+end;
+
+procedure TFRMPRODUTOS.limparCampos;
+begin
+txtNome.Text := '';
+txtDescricao.Text := '';
+txtvalor.Text := '';
+txtestoque.Text := '';
+end;
+
+procedure TFRMPRODUTOS.TXTESTOQUEAsyncChange(Sender: TObject;
+  EventParams: TStringList);
+var
+  numero : integer;
+begin
+
+if not TryStrToInt(txtestoque.Text, numero) then
+  begin
+  webApplication.ShowMessage('Digite Apenas Números!');
+  txtestoque.Text := '';
+  txtestoque.SetFocus;
+  end;
+
+end;
+
+procedure TFRMPRODUTOS.TXTVALORAsyncChange(Sender: TObject;
+  EventParams: TStringList);
+var
+  numero : double;
+begin
+
+if not TryStrToFloat(txtValor.Text, numero) then
+  begin
+  webApplication.ShowMessage('Digite Apenas Números!');
+  txtValor.Text := '';
+  txtValor.SetFocus;
+  end;
+
+
+end;
+
+end.
